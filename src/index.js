@@ -3,14 +3,26 @@ function commentHandler(comment) {
     comments.innerHTML = `<li>${comment.content}</li>`
 }
 
-function like() {
-    let count = document.getElementById("like-count");
-    count++;
+
+function handleSubmit(e) {
+    e.preventDefault();
+    let commentObj = {
+        value: e.target.comment.value
+    }
+    commentHandler(commentObj)
+    postComment(commentObj)
 }
 
-function addCount() {
-    let btn = document.getElementById("like-button")
-    btn.addEventListener("click", like())
+function postComment(commentObj) {
+    fetch("http://localhost:3000/comments", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(commentObj)
+        })
+        .then(res => res.json())
+        .then(commentValue => console.log(commentValue))
 }
 
 function postHandler(content) {
@@ -19,8 +31,14 @@ function postHandler(content) {
     const image = document.getElementById("card-image");
     image.src = `${content.image}`
     const likes = document.getElementById("like-count");
-    likes.innerHTML = `${content.likes}` + ` likes`;
-    addCount();
+    likes.innerHTML = `${content.likes}` + ` likes`
+    let btn = document.getElementById("like-button")
+    btn.addEventListener("click", () => {
+        //console.log("click");
+        content.likes += 1;
+        likes.innerHTML = `${content.likes}` + ` likes`
+
+    })
 }
 
 function getPostData() {
@@ -38,6 +56,8 @@ function getComment() {
 function initialize() {
     getComment();
     getPostData();
+    let form = document.querySelector("#comment-form");
+    form.addEventListener("submit", handleSubmit)
 }
 
 initialize();
