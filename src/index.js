@@ -39,6 +39,7 @@ function postHandler(content) {
         likes.innerHTML = `${content.likes}` + ` likes`
 
     })
+    addLikes(content);
 }
 
 function getPostData() {
@@ -51,6 +52,18 @@ function getComment() {
     fetch("http://localhost:3000/comments")
         .then(res => res.json())
         .then(commentData => commentData.forEach(comment => commentHandler(comment)))
+}
+
+function addLikes(content) {
+    fetch("http://localhost:3000/images", {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(content)
+        })
+        .then(res => res.json)
+        .then(like => console.log(like))
 }
 
 function initialize() {
