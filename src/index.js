@@ -1,16 +1,32 @@
-function titleHandler(post) {
-    const title = document.getElementById("card-title");
-    title.innerText = `${post.title}`;
-}
-
 function commentHandler(comment) {
     const comments = document.querySelector("ul")
-    comments.innerHTML = `<li>${comment.body}</li>`
+    comments.innerHTML = `<li>${comment.content}</li>`
 }
 
-function profileHandler(profile) {
-    const profileV = document.getElementById("card-image")
-    profileV.innerHTML = ``
+function like() {
+    let count = document.getElementById("like-count");
+    count++;
+}
+
+function addCount() {
+    let btn = document.getElementById("like-button")
+    btn.addEventListener("click", like())
+}
+
+function postHandler(content) {
+    const title = document.getElementById("card-title");
+    title.innerText = `${content.title}`;
+    const image = document.getElementById("card-image");
+    image.src = `${content.image}`
+    const likes = document.getElementById("like-count");
+    likes.innerHTML = `${content.likes}` + ` likes`;
+    addCount();
+}
+
+function getPostData() {
+    fetch("http://localhost:3000/images")
+        .then(res => res.json())
+        .then(postData => postData.forEach(content => postHandler(content)))
 }
 
 function getComment() {
@@ -19,22 +35,9 @@ function getComment() {
         .then(commentData => commentData.forEach(comment => commentHandler(comment)))
 }
 
-function getTitle() {
-    fetch("http://localhost:3000/posts")
-        .then(res => res.json())
-        .then(postData => postData.forEach(post => titleHandler(post)))
-}
-
-function getProfile() {
-    fetch("http://localhost:3000/profile")
-        .then(res => res.json())
-        .then(profile => console.log(profile))
-}
-
 function initialize() {
     getComment();
-    getTitle();
-    getProfile();
+    getPostData();
 }
 
 initialize();
